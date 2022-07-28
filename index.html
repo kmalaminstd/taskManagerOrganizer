@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <title>Task Manager</title>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Task Manager</h1>
+        </header>
+        <form>
+            <div class="input-group">
+                <label for="title">Title : </label>
+                <input type="text" id="taskTitle">
+            </div>
+
+            <div class="input-group">
+                <label for="subtitle">Sub Title : </label>
+                <input type="text" id="subtitle">
+            </div>
+
+            <div class="input-group">
+                <label for="assign">Assigned To : </label>
+                <input type="text" id="assignTo">
+            </div>
+
+            <div class="input-group">
+                <div class="date">
+                    <label for="start">start : </label>
+                    <input type="date" id="taskStartDate">
+
+                    <label for="end">End : </label>
+                    <input type="date" id="taskEndDate">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="priority">Priority : </label>
+                <div class="radioGroup" id="priorityGroup">
+                    <input type="checkbox" value="low">
+                    <label for="low">Low</label>
+                    <input type="checkbox" value="medium">
+                    <label for="medium">Medium</label>
+                    <input type="checkbox" value="high">
+                    <label for="high">High</label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="status">Status : </label>
+
+                <div class="radioGroup" id="statusGroup">
+                    <input type="checkbox" value="new">
+                    <label for="new">New</label>
+                    <input type="checkbox" value="pregress">
+                    <label for="pregress">Progress</label>
+                    <input type="checkbox" value="complete">
+                    <label for="complete">Complete</label>
+                </div>                
+            </div>
+
+            <div class="input-group">
+                <div class="comRange">
+                    <label for="title">Complete Range : </label>
+                    <input type="range" id="taskRange" value="10" min="1" max="100">
+                    <input type="number" id="rangeShow" value="10">
+                </div>
+            </div>
+
+            <button>Submit</button> <button id="updBtn">Update</button>
+        </form>
+
+
+        <div id="taskData">
+            <div id="taskSummary">
+                <p>Total : <span id="totalTaskSum">1</span></p>
+                <p>New : <span id="taskStatSum">1</span></p>
+                <p>Inprogress : <span id="taskProgressSum">1</span></p>
+                <p>Completed : <span id="taskComSum">1</span></p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>End Date</th>
+                        <th>Assigned To</th>
+                        <th>Completed (%)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="1">
+                        <!-- <td id="taskIdElm">1</td>
+                        <td id="tasTitleElm">Title</td>
+                        <td id="taskPrioElm">High</td>
+                        <td id="taskStatElm">New</td>
+                        <td id="taskEndDateElm">09-09-2022</td>
+                        <td id="taskAssignedElm">Al-Amin</td>
+                        <td id="taskRangeElm">100%</td>
+                        <td><i class="fa fa-pencil-square-o" aria-hidden="true" id="taskEdit tBtn"></i>
+                        <i class="fa fa-check" aria-hidden="true" id="taskcompleteChange tBtn"></i>
+                        <i class="fa fa-trash" aria-hidden="true" id="taskDelete tBtn"></i></td> -->
+                    </tr>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+
+    <script src="./assets/js/main.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+main{
+    max-width: 1060px;
+    width: 960px;
+    margin: 40px auto;
+}
+
+main h1{
+    text-align: center;
+}
+
+form{
+    margin: 40px 0;
+}
+
+.input-group{
+    margin: 20px 0;
+    width: 100%;
+}
+
+.input-group input{
+    margin: 0 0 0 20px;
+}
+
+.input-group input:not(#priorityGroup input, #statusGroup input, #taskRange, #rangeShow,  #taskStartDate, #taskEndDate){
+    width: 40%;
+    padding: 5px 10px;
+    outline: none;
+    border: 1px solid lightgray;
+    color: gray;
+}
+
+#taskStartDate, #taskEndDate{
+    width: 30%;
+    padding: 5px 10px;
+    outline: none;
+    border: 1px solid lightgray;
+    color: gray;
+}
+
+#taskRange{
+    width: 40%;
+}
+
+#rangeShow{
+    width: 40px;
+}
+
+#taskData{
+    margin-top: 150px;
+}
+
+#taskSummary{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+table{
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table thead tr{
+    background: lightgray;
+}
+table thead tr th{
+    padding: 8px 11px;
+}
+
+table tr{
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+}
+
+tbody tr:nth-child(even){
+    background-color: lightgreen;
+}
+
+tbody tr td{
+    text-align: center;
+    padding: 8px 11px;
+}
+
+button{
+    cursor: pointer;
+    outline: none;
+    border: none;
+    padding: 6px 16px;
+    background-color: lightgreen;
+}
+
+#tBtn{
+    cursor: pointer;
+}
