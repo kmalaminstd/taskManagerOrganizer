@@ -99,3 +99,7 @@ button{
 #tBtn{
     cursor: pointer;
 }
+
+#updBtn{
+    display: none;
+}

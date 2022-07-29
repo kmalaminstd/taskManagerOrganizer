@@ -1,19 +1,19 @@
 
-let localTask = []
+let localTaskArr = []
 
 class LocalStorageAdditon{
     addItemToLocalStorage(task){
         if(localStorage.getItem('Task')){
-            localTask = JSON.parse(localStorage.getItem('Task'))
-            localTask.push(task)
-            localStorage.setItem('Task', JSON.stringify(localTask))
+            localTaskArr = JSON.parse(localStorage.getItem('Task'))
+            localTaskArr.push(task)
+            localStorage.setItem('Task', JSON.stringify(localTaskArr))
         }else{
-            localTask = []
-            localTask.push(task)
-            localStorage.setItem('Task', JSON.stringify(localTask))
+            localTaskArr = []
+            localTaskArr.push(task)
+            localStorage.setItem('Task', JSON.stringify(localTaskArr))
         }
     }
 }
 
 const localStorageAdd = new LocalStorageAdditon()
-export default localStorageAdd
+export {localStorageAdd, localTaskArr}
