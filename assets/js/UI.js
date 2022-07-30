@@ -91,6 +91,8 @@ class UI {
 
 
         taskForm.addEventListener('submit', e => {
+
+            console.log(taskArr);
             e.preventDefault()
             const {
                 taskTitleValue,
@@ -104,7 +106,15 @@ class UI {
                 taskRangeShowValue
             } = this.storeValueFromForm()
 
-            const id = taskArr.length + 1
+            let id ;
+
+            if(taskArr.length === 0){
+                id = taskArr.length + 1
+            }else{
+                id = Number(taskArr[taskArr.length-1].id) + 1
+            }
+
+            
 
             const createTask = {
                 id: id,
@@ -118,29 +128,28 @@ class UI {
                 TaskRange: taskRangeValue
             }
 
-            const isError = validation.formValidation(taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
+            const isError = validation.formValidation(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
             if (isError) {
                 alert('Some field is empty')
             } else {
 
                 taskArr.push(createTask)
-                populateUi.populationofUi(id, taskTitleValue, taskAssignToValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue)
-
-                // item send to local Storage
+                populateUi.populationofUi(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue)
+                console.log(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
                 localStorageAdd.addItemToLocalStorage(createTask)
-                // reset value after form submit
-                // this.taskFormReset()
             }
         })
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('Task')) {
                 taskArr = JSON.parse(localStorage.getItem('Task'))
-
-                taskArr.forEach(elem => {
                     // console.log(elem);
-                    populateUi.populationofUi(elem.id, elem.TaskTitle, elem.TaskAssignedTo, elem.TaskEndDate, elem.TaskPriority, elem.TaskStatus, elem.TaskRange)
-                })
+                    taskArr.map( elem => {
+                        // console.log(taskArr);
+                        populateUi.populationofUi(elem.id, elem.TaskTitle, elem.TaskSubtitle, elem.TaskAssignedTo, elem.TaskStartDate, elem.TaskEndDate, elem.TaskPriority, elem.TaskStatus, elem.TaskRange)
+                    })
+                
+                
             }
 
             const tbodyTr = document.querySelectorAll('tbody tr')
@@ -163,7 +172,7 @@ class UI {
                         const selectedTask = taskArr.find(elem => {
                             // console.log(elem);
                             if (elem.id === Number(id)) {
-                                // console.log(elem);
+                                console.log(elem);
                                 this.fillEditField(elem)
                                 
                             }
@@ -171,52 +180,61 @@ class UI {
 
                     }
                 })
+
+                tbodyTr[i].addEventListener('click', e => {
+                    if(e.target.classList.contains('fa-check')){
+                        const id = this.getTaskIdFromTable(e.target)
+                        itemId = id
+                        let taskArrChange = taskArr.find( elem => {
+                            if(elem.id === Number(id)){
+                                this.taskStatusUpdate(elem) 
+                            }
+                        })
+                        
+                    }
+                })
             }
 
-            document.querySelector('#updBtn').addEventListener('click', e => {
+            
+        })
+
+        document.querySelector('#updBtn').addEventListener('click', e => {
                 
-                const {
-                    taskTitleValue,
-                    taskSubTitleValue,
-                    taskAssignToValue,
-                    taskStartDateValue,
-                    taskEndDateValue,
-                    taskPriorityValue,
-                    taskStatusValue,
-                    taskRangeValue
-                } = this.storeValueFromForm();
+            const {
+                taskTitleValue,
+                taskSubTitleValue,
+                taskAssignToValue,
+                taskStartDateValue,
+                taskEndDateValue,
+                taskPriorityValue,
+                taskStatusValue,
+                taskRangeValue
+            } = this.storeValueFromForm();
 
-                const isError = validation.formValidation(taskTitleValue)
+            const isError = validation.formValidation(taskTitleValue)
+                                            
+            if (isError) {
+                alert('Some fields are empty')
+            } else {
+                // console.log(itemId);
 
-                if (isError) {
-                    alert('Some field is empty')
-                } else {
-                    console.log(itemId);
-                    taskArr = taskArr.map( elem => {
-                        if(elem.id === Number(itemId)){
-                           return {
-                            id : elem.id,
-                            TaskTitle : taskTitleValue,
-                            TaskSubtitle : taskSubTitleValue,
-                            TaskAssignedTo : taskAssignToValue,
-                            TaskStartDate : taskStartDateValue,
-                            TaskEndDate : taskEndDateValue,
-                            TaskPriority : taskPriorityValue,
-                            TaskStatus : taskStatusValue,
-                            TaskRange : taskRangeValue
-                           }
-                        }else{
-                            return elem
-                        }
-                    })
-                    console.log(taskArr);
-                    // item send to local Storage
-                    // localStorageAdd.addItemToLocalStorage(createTask)
-                    // reset value after form submit
-                    // this.taskFormReset()
-                }
+                taskArr.map( elem => {
+                    if(elem.id === Number(itemId)){
+                        // console.log(elem);
+                       this.taskUpdateInUi(elem)
+                    }
+                })
+                // console.log(taskArr);
+              
+                this.updateLocalStorage()
+                window.location.reload()
+                // console.log(taskArr);
+                // item send to local Storage
+                // localStorageAdd.addItemToLocalStorage(taskArr)
+                // reset value after form submit
+                this.taskFormReset()
+            }
 
-            })
         })
 
     }
@@ -270,8 +288,45 @@ class UI {
         }
     }
 
+    taskUpdateInUi(elem){
+        const {
+            taskTitleValue,
+            taskSubTitleValue,
+            taskAssignToValue,
+            taskStartDateValue,
+            taskEndDateValue,
+            taskPriorityValue,
+            taskStatusValue,
+            taskRangeValue
+        } = this.storeValueFromForm()
+        elem.TaskTitle = taskTitleValue
+        elem.TaskSubtitle = taskSubTitleValue
+        elem.TaskStatus = taskStatusValue
+        elem.TaskStartDate = taskStartDateValue
+        elem.TaskEndDate = taskEndDateValue
+        elem.TaskAssignedTo = taskAssignToValue
+        elem.TaskPriority = taskPriorityValue
+        elem.TaskRange = taskRangeValue
+        
+    }
+
+    taskStatusUpdate(elem){
+        elem.TaskStatus = "complete"
+        this.updateLocalStorage()
+        window.location.reload()
+    }
+
     getTaskIdFromTable(itemElem) {
-        const id = itemElem.parentNode.parentNode.classList[0].split('')[7]
+        let id;
+
+        if(itemElem.parentNode.parentNode.classList[0].split('').length >= 9){
+            
+            id = itemElem.parentNode.parentNode.classList[0].split('')[7] + itemElem.parentNode.parentNode.classList[0].split('')[8]
+
+        }else{
+            id = itemElem.parentNode.parentNode.classList[0].split('')[7]
+        }
+        
         return id
     }
 
