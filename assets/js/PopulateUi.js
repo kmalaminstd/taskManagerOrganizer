@@ -2,7 +2,7 @@ class Uipopulation {
     populationofUi(taskArr) {
         const tbody =document.querySelector('tbody')
         tbody.innerHTML = ''
-        console.log(taskArr);
+        // console.log(taskArr);
         
         taskArr.forEach(elem => {
         let taskElm = `

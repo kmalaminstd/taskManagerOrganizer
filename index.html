@@ -55,11 +55,11 @@
                 <label for="status">Status : </label>
 
                 <div class="radioGroup" id="statusGroup">
-                    <input type="radio" value="new">
+                    <input type="radio" value="new" id="taskNew">
                     <label for="new">New</label>
-                    <input type="radio" value="pregress">
+                    <input type="radio" value="progress" id="taskProgress">
                     <label for="pregress">Progress</label>
-                    <input type="radio" value="complete">
+                    <input type="radio" value="complete" id="taskComplete">
                     <label for="complete">Complete</label>
                 </div>                
             </div>
@@ -80,10 +80,10 @@
 
         <div id="taskData">
             <div id="taskSummary">
-                <p>Total : <span id="totalTaskSum">1</span></p>
-                <p>New : <span id="taskStatSum">1</span></p>
-                <p>Inprogress : <span id="taskProgressSum">1</span></p>
-                <p>Completed : <span id="taskComSum">1</span></p>
+                <p>Total : <span id="totalTaskSum">0</span></p>
+                <p>New : <span id="taskNewSum">0</span></p>
+                <p>Inprogress : <span id="taskProgressSum">0</span></p>
+                <p>Completed : <span id="taskComSum">0</span></p>
             </div>
             <table>
                 <thead>

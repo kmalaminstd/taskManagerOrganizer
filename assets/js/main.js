@@ -1,4 +1,7 @@
 import ui from './UI.js';
 
 ui.initialize()
-ui.taskRangeShow()
+ui.deleteBtnFunc()
+ui.countTaskSum()
+// ui.taskRangeShow()
+// ui.selectSingleRadioBtn()

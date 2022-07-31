@@ -6,6 +6,10 @@ import {
 
 let taskArr = [];
 let itemId = 0;
+let newTaskCount = 0
+let progressTaskCount = 0
+let completeTaskCounts = 0
+let arrLength = taskArr.length
 
 class UI {
     allSelectors() {
@@ -19,6 +23,10 @@ class UI {
         const taskRangeInput = document.querySelector('#taskRange');
         const taskRangeShowInput = document.querySelector('#rangeShow')
         const taskForm = document.querySelector('form');
+        const taskTotalSumm = document.querySelector('#totalTaskSum');
+        const taskNewSumm = document.querySelector('#taskNewSum');
+        const taskProgressSumm = document.querySelector('#taskProgressSum');
+        const taskCompleteSumm = document.querySelector('#taskComSum');
 
         return {
             taskTitleInput,
@@ -30,7 +38,11 @@ class UI {
             taskStatusInput,
             taskRangeInput,
             taskRangeShowInput,
-            taskForm
+            taskForm,
+            taskTotalSumm,
+            taskNewSumm,
+            taskProgressSumm,
+            taskCompleteSumm
         }
     }
 
@@ -65,6 +77,8 @@ class UI {
                 taskStatusValue = taskStatusInput[i].value
             }
         }
+
+
         let taskRangeValue = taskRangeInput.value;
         const taskRangeShowValue = taskRangeShowInput.value;
 
@@ -81,9 +95,14 @@ class UI {
         }
     }
 
+    
 
 
     initialize() {
+            
+            this.selectSingleRadioBtn()
+            this.taskRangeShow()
+            
         const {
             taskRangeInput,
             taskPriorityInput,
@@ -142,126 +161,172 @@ class UI {
                 populateUi.populationofUi(taskArr)
                 localStorageAdd.addItemToLocalStorage(createTask)
             }
+            this.deleteBtnFunc()
+            this.editBtnFunc()
+            this.taskFormReset()
+            this.completeBtnFunc()
+            
         })
 
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('Task')) {
                 taskArr = JSON.parse(localStorage.getItem('Task'))
-                    // console.log(elem);
                 populateUi.populationofUi(taskArr)
-                    // taskArr.map( elem => {
-                    //     // console.log(taskArr);
-                    //     // populateUi.populationofUi(elem.id, elem.TaskTitle, elem.TaskSubtitle, elem.TaskAssignedTo, elem.TaskStartDate, elem.TaskEndDate, elem.TaskPriority, elem.TaskStatus, elem.TaskRange)
-                    // })
                 
-                
-            }
+            } 
+            this.deleteBtnFunc()
+            this.editBtnFunc()
+            this.completeBtnFunc()
+            this.countTaskSum()
+            /// ==========
 
-           
-            const tbodyTr = document.querySelectorAll('tbody tr')
-
-            for (let i = 0; i < tbodyTr.length; i++) {
-                tbodyTr[i].addEventListener('click', e => {
-                    if (e.target.classList.contains('fa-trash')) {
-                        const id = this.getTaskIdFromTable(e.target)
-                        this.removeFromUi(id)
-                        const filterdArr = this.removeFromArr(id)
-                        this.updateLocalStorage()
-                    }
-                })
-
-                tbodyTr[i].addEventListener('click', e => {
-                    if (e.target.classList.contains('fa-pencil-square-o')) {
-                        const id = this.getTaskIdFromTable(e.target)
-                        itemId = id
-                        document.querySelector('#updBtn').style.display = 'inline-block'
-                        const selectedTask = taskArr.find(elem => {
-                            // console.log(elem);
-                            if (elem.id === Number(id)) {
-                                console.log(elem);
-                                this.fillEditField(elem)
-                                
-                            }
-                        })
-
-                    }
-                })
-
-                tbodyTr[i].addEventListener('click', e => {
-                    if(e.target.classList.contains('fa-check')){
-                        const id = this.getTaskIdFromTable(e.target)
-                        itemId = id
-                        taskArr.find( elem => {
-                            if(elem.id === Number(id)){
-                                elem.TaskStatus = 'complete'
-                            }else{
-                                return elem
-                            } 
-                            populateUi.populationofUi(taskArr)
-                            this.updateLocalStorage()
-                        })
-                        
-                    }
-                })
-            }
-
-            
-        })
-
-        document.querySelector('#updBtn').addEventListener('click', e => {
-                
-            const {
-                taskTitleValue,
-                taskSubTitleValue,
-                taskAssignToValue,
-                taskStartDateValue,
-                taskEndDateValue,
-                taskPriorityValue,
-                taskStatusValue,
-                taskRangeValue
-            } = this.storeValueFromForm();
-
-            const isError = validation.formValidation(taskTitleValue)
-                                            
-            if (isError) {
-                alert('Some fields are empty')
-            } else {
-                // console.log(itemId);
-
-                taskArr.map( elem => {
-                    if(elem.id === Number(itemId)){
-                        // console.log(elem);
-                    //    this.taskUpdateInUi(elem)
-                    
-                        elem.id = elem.id
-                        elem.TaskTitle = taskTitleValue
-                        elem.TaskSubtitle = taskSubTitleValue
-                        elem.TaskStatus = taskStatusValue,
-                        elem.TaskStartDate = taskStartDateValue
-                        elem.TaskRange = taskRangeValue
-                        elem.TaskPriority = taskPriorityValue
-                        elem.TaskEndDate = taskEndDateValue
-                        elem.TaskAssignedTo = taskAssignToValue
-                    
-                    }else{
-                        return elem
-                    }
-                })
-                
-                console.log(taskArr);
-                populateUi.populationofUi(taskArr)
-                this.updateLocalStorage()
-                // window.location.reload()
-                // console.log(taskArr);
-                // item send to local Storage
-                // localStorageAdd.addItemToLocalStorage(taskArr)
-                // reset value after form submit
-                // this.taskFormReset()
-            }
-
-        })
-
+            document.querySelector('#updBtn').addEventListener('click', () => {    
+                this.updateBtnFunc()
+            })   
+        }); 
     }
+
+    countTaskSum(){
+        const {
+            taskTotalSumm,
+            taskNewSumm,
+            taskProgressSumm,
+            taskCompleteSumm
+        } = this.allSelectors()
+
+        const taskPrioCell = document.querySelectorAll('#taskStatElm')
+        // console.log(taskPrioCell);
+        for(let i = 0; i < taskPrioCell.length; i++){
+            // console.log(taskPrioCell[i]);
+            if(taskPrioCell[i].textContent.includes('complete')){
+                completeTaskCounts++
+                
+            }
+            if(taskPrioCell[i].textContent.includes('progress')){
+                progressTaskCount++
+            }
+            if(taskPrioCell[i].textContent.includes('new')){
+                newTaskCount++
+            }
+            taskCompleteSumm.textContent = completeTaskCounts 
+            taskProgressSumm.textContent = progressTaskCount
+            taskNewSumm.textContent = newTaskCount
+            taskTotalSumm.textContent = taskArr.length
+        }  
+    }
+
+    updateBtnFunc(){
+
+        const {
+            taskTitleValue,
+            taskSubTitleValue,
+            taskAssignToValue,
+            taskStartDateValue,
+            taskEndDateValue,
+            taskPriorityValue,
+            taskStatusValue,
+            taskRangeValue
+        } = this.storeValueFromForm();
+
+        const isError = validation.formValidation(taskTitleValue)
+        if (isError) {
+            alert('Some fields are empty')
+        } else {
+            // console.log(itemId);
+
+            taskArr.map( elem => {
+                if(elem.id === Number(itemId)){
+                    // console.log(elem);
+                //    this.taskUpdateInUi(elem)
+                
+                    elem.id = elem.id
+                    elem.TaskTitle = taskTitleValue
+                    elem.TaskSubtitle = taskSubTitleValue
+                    elem.TaskStatus = taskStatusValue,
+                    elem.TaskStartDate = taskStartDateValue
+                    elem.TaskRange = taskRangeValue
+                    elem.TaskPriority = taskPriorityValue
+                    elem.TaskEndDate = taskEndDateValue
+                    elem.TaskAssignedTo = taskAssignToValue
+                
+                }else{
+                    return elem
+                }
+            })
+            
+            console.log(taskArr);
+            populateUi.populationofUi(taskArr)
+            this.updateLocalStorage()
+            this.taskFormReset()
+        }                                
+    }
+
+    editBtnFunc(){
+
+        const tbodyTr = document.querySelectorAll('tbody tr')
+
+        for(let i = 0; i < tbodyTr.length; i++){
+            tbodyTr[i].addEventListener('click', e => {
+                if (e.target.classList.contains('fa-pencil-square-o')) {
+                    const id = this.getTaskIdFromTable(e.target)
+                    itemId = id
+                    document.querySelector('#updBtn').style.display = 'inline-block'
+                    const selectedTask = taskArr.find(elem => {
+                        // console.log(elem);
+                        if (elem.id === Number(id)) {
+                            // console.log(elem);
+                            this.fillEditField(elem)
+                            
+                        }
+                    })
+
+                }
+            })
+        }
+        
+    }
+
+    completeBtnFunc(){
+
+        console.log('yes');
+        const tbodyTr = document.querySelectorAll('tbody tr')
+        for(let i = 0; i< tbodyTr.length; i++){
+            tbodyTr[i].addEventListener('click', e => {
+                if(e.target.classList.contains('fa-check')){
+                    const id = this.getTaskIdFromTable(e.target)
+                    itemId = id
+                    taskArr.find( elem => {
+                        if(elem.id === Number(itemId)){
+                            elem.TaskStatus = "complete"
+                        }
+                    })
+                    // console.log(taskArr);
+                    populateUi.populationofUi(taskArr)
+                    this.updateLocalStorage()
+                }   
+            })
+        }
+    }
+
+    deleteBtnFunc(){
+        
+        
+        const tbodyTr = document.querySelectorAll('tbody tr')
+        
+        for(let i = 0; i < tbodyTr.length; i++){
+            tbodyTr[i].addEventListener('click', e => {
+                if (e.target.classList.contains('fa-trash')) {
+                    const id = this.getTaskIdFromTable(e.target)
+                    this.removeFromUi(id)
+                    const filterdArr = this.removeFromArr(id)
+                    this.updateLocalStorage()
+                }
+            })
+        }
+        console.log(taskArr.length);
+    }
+
+    
 
     removeFromUi(id) {
         document.querySelector(`.taskId-${id}`).remove();
@@ -334,12 +399,6 @@ class UI {
         
     }
 
-    taskStatusUpdate(elem){
-        elem.TaskStatus = "complete"
-        this.updateLocalStorage()
-        // window.location.reload()
-    }
-
     getTaskIdFromTable(itemElem) {
         let id;
 
@@ -383,12 +442,73 @@ class UI {
         taskAssignToInput.value = ''
         taskStartDateInput.value = ''
         taskEndDateInput.value = ''
-        taskPriorityInput.value = ''
-        taskStatusInput.value = ''
-        taskRangeInput.value = ''
+        // taskPriorityInput.value = ''
+        for(let i = 0; i < taskPriorityInput.length; i++){
+            taskPriorityInput[i].checked = false
+        }
+        // taskStatusInput.value = ''
+        for(let i = 0; i < taskStatusInput.length; i++){
+            taskStatusInput[i].checked = false
+        }
+        taskRangeInput.value = '10'
         taskRangeShowInput.value = '10'
     }
 
+
+    selectSingleRadioBtn(){
+        const {taskPriorityInput, taskStatusInput} = this.allSelectors()
+        const {taskPriorityValue , taskStatusValue} = this.storeValueFromForm
+
+        for(let i = 0; i < taskPriorityInput.length; i++){
+            taskPriorityInput[i].addEventListener('click', () => {
+                if(taskPriorityInput[i].value === 'low'){
+                    // console.log(taskPriorityInput[i].value === 'low');
+                    document.querySelector('#low').checked = true
+                }else{
+                    document.querySelector('#low').checked = false
+                }
+                if(taskPriorityInput[i].value === 'medium'){
+                    // console.log(taskPriorityInput[i].value === 'low');
+                    document.querySelector('#medium').checked = true
+                }else{
+                    document.querySelector('#medium').checked = false
+                }
+                if(taskPriorityInput[i].value === 'high'){
+                    // console.log(taskPriorityInput[i].value === 'low');
+                    document.querySelector('#high').checked = true
+                }else{
+                    document.querySelector('#high').checked = false
+                }
+            })
+        }
+
+        for (let i = 0; i < taskStatusInput.length; i++) {
+            
+            taskStatusInput[i].addEventListener('click', () => {
+                if(taskStatusInput[i].value === 'new'){
+                    // console.log(taskPriorityInput[i].value === 'low');
+                    document.querySelector('#taskNew').checked = true
+                }else{
+                    document.querySelector('#taskNew').checked = false
+                }
+                if(taskStatusInput[i].value === 'progress'){
+                    // console.log(taskPriorityInput[i].value === 'low');
+                    document.querySelector('#taskProgress').checked = true
+                }else{
+                    document.querySelector('#taskProgress').checked = false
+                }
+                if(taskStatusInput[i].value === 'complete'){
+                    // console.log(taskPriorityInput[i].value === 'low');
+                    document.querySelector('#taskComplete').checked = true
+                }else{
+                    document.querySelector('#taskComplete').checked = false
+                }
+            })
+            
+        }
+    }
+
+   
 
 }
 
