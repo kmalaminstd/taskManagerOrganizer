@@ -86,9 +86,12 @@ class UI {
     initialize() {
         const {
             taskRangeInput,
+            taskPriorityInput,
+            taskStatusInput,
             taskForm
         } = this.allSelectors();
 
+        
 
         taskForm.addEventListener('submit', e => {
 
@@ -134,8 +137,9 @@ class UI {
             } else {
 
                 taskArr.push(createTask)
-                populateUi.populationofUi(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue)
-                console.log(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
+                // populateUi.populationofUi(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue)
+                // console.log(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
+                populateUi.populationofUi(taskArr)
                 localStorageAdd.addItemToLocalStorage(createTask)
             }
         })
@@ -144,14 +148,16 @@ class UI {
             if (localStorage.getItem('Task')) {
                 taskArr = JSON.parse(localStorage.getItem('Task'))
                     // console.log(elem);
-                    taskArr.map( elem => {
-                        // console.log(taskArr);
-                        populateUi.populationofUi(elem.id, elem.TaskTitle, elem.TaskSubtitle, elem.TaskAssignedTo, elem.TaskStartDate, elem.TaskEndDate, elem.TaskPriority, elem.TaskStatus, elem.TaskRange)
-                    })
+                populateUi.populationofUi(taskArr)
+                    // taskArr.map( elem => {
+                    //     // console.log(taskArr);
+                    //     // populateUi.populationofUi(elem.id, elem.TaskTitle, elem.TaskSubtitle, elem.TaskAssignedTo, elem.TaskStartDate, elem.TaskEndDate, elem.TaskPriority, elem.TaskStatus, elem.TaskRange)
+                    // })
                 
                 
             }
 
+           
             const tbodyTr = document.querySelectorAll('tbody tr')
 
             for (let i = 0; i < tbodyTr.length; i++) {
@@ -185,10 +191,14 @@ class UI {
                     if(e.target.classList.contains('fa-check')){
                         const id = this.getTaskIdFromTable(e.target)
                         itemId = id
-                        let taskArrChange = taskArr.find( elem => {
+                        taskArr.find( elem => {
                             if(elem.id === Number(id)){
-                                this.taskStatusUpdate(elem) 
-                            }
+                                elem.TaskStatus = 'complete'
+                            }else{
+                                return elem
+                            } 
+                            populateUi.populationofUi(taskArr)
+                            this.updateLocalStorage()
                         })
                         
                     }
@@ -221,18 +231,32 @@ class UI {
                 taskArr.map( elem => {
                     if(elem.id === Number(itemId)){
                         // console.log(elem);
-                       this.taskUpdateInUi(elem)
+                    //    this.taskUpdateInUi(elem)
+                    
+                        elem.id = elem.id
+                        elem.TaskTitle = taskTitleValue
+                        elem.TaskSubtitle = taskSubTitleValue
+                        elem.TaskStatus = taskStatusValue,
+                        elem.TaskStartDate = taskStartDateValue
+                        elem.TaskRange = taskRangeValue
+                        elem.TaskPriority = taskPriorityValue
+                        elem.TaskEndDate = taskEndDateValue
+                        elem.TaskAssignedTo = taskAssignToValue
+                    
+                    }else{
+                        return elem
                     }
                 })
-                // console.log(taskArr);
-              
+                
+                console.log(taskArr);
+                populateUi.populationofUi(taskArr)
                 this.updateLocalStorage()
-                window.location.reload()
+                // window.location.reload()
                 // console.log(taskArr);
                 // item send to local Storage
                 // localStorageAdd.addItemToLocalStorage(taskArr)
                 // reset value after form submit
-                this.taskFormReset()
+                // this.taskFormReset()
             }
 
         })
@@ -313,7 +337,7 @@ class UI {
     taskStatusUpdate(elem){
         elem.TaskStatus = "complete"
         this.updateLocalStorage()
-        window.location.reload()
+        // window.location.reload()
     }
 
     getTaskIdFromTable(itemElem) {
