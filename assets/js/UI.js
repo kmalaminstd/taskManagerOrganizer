@@ -160,11 +160,10 @@ class UI {
                 // console.log(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
                 populateUi.populationofUi(taskArr)
                 localStorageAdd.addItemToLocalStorage(createTask)
+                this.editBtnFunc()
+                this.completeBtnFunc()
             }
             this.deleteBtnFunc()
-            this.editBtnFunc()
-            this.taskFormReset()
-            this.completeBtnFunc()
             
         })
 
@@ -172,17 +171,14 @@ class UI {
             if (localStorage.getItem('Task')) {
                 taskArr = JSON.parse(localStorage.getItem('Task'))
                 populateUi.populationofUi(taskArr)
-                
             } 
+            /// ==========
+            document.querySelector('#updBtn').addEventListener('click', () => {    
+                this.updateBtnFunc()
+            }) 
             this.deleteBtnFunc()
             this.editBtnFunc()
             this.completeBtnFunc()
-            this.countTaskSum()
-            /// ==========
-
-            document.querySelector('#updBtn').addEventListener('click', () => {    
-                this.updateBtnFunc()
-            })   
         }); 
     }
 
@@ -256,9 +252,13 @@ class UI {
             
             console.log(taskArr);
             populateUi.populationofUi(taskArr)
-            this.updateLocalStorage()
-            this.taskFormReset()
-        }                                
+            
+            
+            
+        }  
+        this.deleteBtnFunc()
+        this.completeBtnFunc()
+        this.editBtnFunc()                            
     }
 
     editBtnFunc(){
@@ -283,7 +283,7 @@ class UI {
                 }
             })
         }
-        
+        this.deleteBtnFunc()
     }
 
     completeBtnFunc(){
@@ -303,9 +303,13 @@ class UI {
                     // console.log(taskArr);
                     populateUi.populationofUi(taskArr)
                     this.updateLocalStorage()
+                    this.deleteBtnFunc()
                 }   
+                
             })
         }
+        // this.editBtnFunc()
+        
     }
 
     deleteBtnFunc(){
@@ -323,13 +327,11 @@ class UI {
                 }
             })
         }
-        console.log(taskArr.length);
+        
     }
 
-    
-
     removeFromUi(id) {
-        document.querySelector(`.taskId-${id}`).remove();
+            document.querySelector(`.taskId-${id}`).remove(); 
     }
 
     fillEditField(elem) {
