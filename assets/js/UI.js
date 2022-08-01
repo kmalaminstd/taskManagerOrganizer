@@ -131,8 +131,6 @@ class UI {
                 id = Number(taskArr[taskArr.length-1].id) + 1
             }
 
-            
-
             const createTask = {
                 id: id,
                 TaskTitle: taskTitleValue,
@@ -154,13 +152,15 @@ class UI {
                 taskArr.push(createTask)
                 populateUi.populationofUi(taskArr)
                 localStorageAdd.addItemToLocalStorage(createTask)
-                this.editBtnFunc()
+                
                 this.completeBtnFunc()
                 taskArrLength = taskArr.length
                 this.countAllTask(taskArrLength)
                 this.taskCounts(taskArr)
                 this.taskFormReset()
+                // this.editBtnFunc()
             }
+            this.editBtnFunc()
             this.deleteBtnFunc()
             
         })
@@ -279,6 +279,7 @@ class UI {
                         if (elem.id === Number(id)) {
                             // console.log(elem);
                             this.fillEditField(elem)
+                            console.log(elem);
                             
                         }
                     })
@@ -307,12 +308,13 @@ class UI {
                     populateUi.populationofUi(taskArr)
                     this.updateLocalStorage()
                     this.deleteBtnFunc()
+                    this.editBtnFunc()
                 }   
                 
             })
         }
         this.taskCounts(taskArr)
-        // this.editBtnFunc()
+        
         
     }
 
@@ -412,12 +414,14 @@ class UI {
 
         for (let i = 0; i < taskPriorityInput.length; i++) {
             if (taskPriorityInput[i].value === elem.TaskPriority) {
-                // console.log(taskPriorityInput[i]);
-                taskPriorityInput[i].setAttribute('checked', '')
+                console.log(taskPriorityInput[i]);
+                // taskPriorityInput[i].setAttribute('checked', '')
+                taskPriorityInput[i].checked = true
             }
 
             if (taskStatusInput[i].value === elem.TaskStatus) {
-                taskStatusInput[i].setAttribute('checked', '')
+                // taskStatusInput[i].setAttribute('checked', '')
+                taskStatusInput[i].checked = true
             }
         }
 
