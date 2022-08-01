@@ -6,10 +6,8 @@ import {
 
 let taskArr = [];
 let itemId = 0;
-let newTaskCount = 0
-let progressTaskCount = 0
-let completeTaskCounts = 0
-let arrLength = taskArr.length
+
+let taskArrLength = taskArr.length
 
 class UI {
     allSelectors() {
@@ -95,9 +93,6 @@ class UI {
         }
     }
 
-    
-
-
     initialize() {
             
             this.selectSingleRadioBtn()
@@ -150,18 +145,21 @@ class UI {
                 TaskRange: taskRangeValue
             }
 
-            const isError = validation.formValidation(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
+            const isError = validation.formValidation(taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
+
             if (isError) {
                 alert('Some field is empty')
             } else {
 
                 taskArr.push(createTask)
-                // populateUi.populationofUi(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue)
-                // console.log(id, taskTitleValue, taskSubTitleValue, taskAssignToValue, taskStartDateValue, taskEndDateValue, taskPriorityValue, taskStatusValue, taskRangeValue);
                 populateUi.populationofUi(taskArr)
                 localStorageAdd.addItemToLocalStorage(createTask)
                 this.editBtnFunc()
                 this.completeBtnFunc()
+                taskArrLength = taskArr.length
+                this.countAllTask(taskArrLength)
+                this.taskCounts(taskArr)
+                this.taskFormReset()
             }
             this.deleteBtnFunc()
             
@@ -171,6 +169,7 @@ class UI {
             if (localStorage.getItem('Task')) {
                 taskArr = JSON.parse(localStorage.getItem('Task'))
                 populateUi.populationofUi(taskArr)
+                // this.countAllTask(taskArr.length)
             } 
             /// ==========
             document.querySelector('#updBtn').addEventListener('click', () => {    
@@ -179,6 +178,8 @@ class UI {
             this.deleteBtnFunc()
             this.editBtnFunc()
             this.completeBtnFunc()
+            taskArrLength = taskArr.length
+            this.countAllTask(taskArrLength)
         }); 
     }
 
@@ -258,7 +259,9 @@ class UI {
         }  
         this.deleteBtnFunc()
         this.completeBtnFunc()
-        this.editBtnFunc()                            
+        this.editBtnFunc()
+        this.taskCounts(taskArr)  
+        this.taskFormReset()                         
     }
 
     editBtnFunc(){
@@ -288,7 +291,7 @@ class UI {
 
     completeBtnFunc(){
 
-        console.log('yes');
+        // console.log('yes');
         const tbodyTr = document.querySelectorAll('tbody tr')
         for(let i = 0; i< tbodyTr.length; i++){
             tbodyTr[i].addEventListener('click', e => {
@@ -308,15 +311,14 @@ class UI {
                 
             })
         }
+        this.taskCounts(taskArr)
         // this.editBtnFunc()
         
     }
 
     deleteBtnFunc(){
-        
-        
         const tbodyTr = document.querySelectorAll('tbody tr')
-        
+        this.taskCounts(taskArr)
         for(let i = 0; i < tbodyTr.length; i++){
             tbodyTr[i].addEventListener('click', e => {
                 if (e.target.classList.contains('fa-trash')) {
@@ -324,10 +326,63 @@ class UI {
                     this.removeFromUi(id)
                     const filterdArr = this.removeFromArr(id)
                     this.updateLocalStorage()
+                    taskArrLength = taskArr.length
+                    this.countAllTask(taskArrLength)
+                    this.taskCounts(taskArr)
                 }
-            })
+            }) 
         }
-        
+    }
+
+    countAllTask(count){
+        document.querySelector('#totalTaskSum').textContent = count
+    }
+
+    taskCounts(arr){
+        let newTaskCount = 0
+        let progressTaskCount = 0
+        let completeTaskCounts = 0
+        arr.forEach( elem => {
+            // console.log(elem);
+            if(elem.TaskStatus === "progress"){
+                // console.log(elem);
+                progressTaskCount += 1
+                document.querySelector('#taskProgressSum').textContent = progressTaskCount
+            }else {
+                if(taskArr.length === 0){
+                    progressTaskCount = 0
+                    document.querySelector('#taskProgressSum').textContent = progressTaskCount 
+                }else{
+                    progressTaskCount = progressTaskCount
+                    document.querySelector('#taskProgressSum').textContent = progressTaskCount 
+                } 
+            }
+            if(elem.TaskStatus === 'complete'){
+                // console.log(elem);
+                completeTaskCounts += 1
+                document.querySelector('#taskComSum').textContent = completeTaskCounts
+            }else {
+                if(taskArr.length === 0){
+                    completeTaskCounts = 0
+                    document.querySelector('#taskComSum').textContent = completeTaskCounts
+                }else{
+                    completeTaskCounts = completeTaskCounts
+                    document.querySelector('#taskComSum').textContent = completeTaskCounts
+                }   
+            }
+            if(elem.TaskStatus === 'new'){
+                newTaskCount += 1
+                document.querySelector('#taskNewSum').textContent = newTaskCount
+            }else{
+                if(taskArr.length === 0){
+                    newTaskCount = 0
+                    document.querySelector('#taskNewSum').textContent = newTaskCount
+                }else{
+                    newTaskCount = newTaskCount
+                    document.querySelector('#taskNewSum').textContent = newTaskCount
+                }  
+            }
+        })
     }
 
     removeFromUi(id) {
