@@ -103,3 +103,16 @@ button{
 #updBtn{
     display: none;
 }
+
+.perData{
+    margin: 25px 0;
+    text-align: center;
+}
+
+.perData a{
+    text-decoration: none;
+}
+
+.perData a:hover{
+    text-decoration: underline;
+}
